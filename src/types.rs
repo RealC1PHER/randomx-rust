@@ -195,7 +195,8 @@ impl RxState {
 				let d = dataset.0.as_ptr();
 				let c = cache.0.as_ptr();
 				unsafe {
-					randomx_init_dataset(d, c, start.into(), count.into());
+					// c_ulong: 64-bit on Linux, 32-bit on Windows; dataset item counts fit both.
+					randomx_init_dataset(d, c, start as _, count as _);
 				}
 			}));
 			start += count;
