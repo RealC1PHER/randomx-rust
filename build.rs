@@ -34,7 +34,13 @@ fn generate_bindings(out_dir: &str) {
 }
 
 fn compile_cmake() {
-	cmake::Config::new("randomx").build_target("").build();
+	// MSVC: CMake >= 3.x rejects an empty --target for the Visual Studio generator.
+	let target = if env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
+		"ALL_BUILD"
+	} else {
+		""
+	};
+	cmake::Config::new("randomx").build_target(target).build();
 }
 
 fn exec_if_newer<F: Fn()>(inpath: &str, outpath: &str, build: F) {
